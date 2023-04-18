@@ -14,20 +14,10 @@ const swiper = new Swiper(".swiper", {
   direction: "horizontal",
   loop: true,
 
-  // If we need pagination
-  pagination: {
-    el: ".swiper-pagination",
-  },
-
   // Navigation arrows
   navigation: {
     nextEl: ".swiper-button-next",
     prevEl: ".swiper-button-prev",
-  },
-
-  // And if we need scrollbar
-  scrollbar: {
-    el: ".swiper-scrollbar",
   },
 });
 
@@ -41,3 +31,34 @@ fetch(`/images`)
       );
     });
   });
+
+const uploadBtn = document.querySelector(".upload-btn");
+uploadBtn.addEventListener("click", () => {
+  console.log("upload");
+
+  const formData = new FormData();
+  formData.append(
+    "image",
+    document.querySelector(`input[type="file"]`).files[0]
+    //ezt követően lehet Írni egy if statement, hogy megvizsgáljuk, hogy valóban van-e file kiválasztva
+  );
+  formData.append("title", document.querySelector(`input[name="title"]`).value);
+  formData.append(
+    "phName",
+    document.querySelector(`input[name="ph-name"]`).value
+  );
+  fetch("/upload", {
+    method: "POST",
+    body: formData,
+  })
+    .then((res) => {
+      return res.json();
+    })
+    .then((resData) => {
+      console.log(resData);
+      swiperWrapElement.insertAdjacentHTML(
+        "beforeend",
+        imagesComponent(resData.title, resData.url)
+      );
+    });
+});
